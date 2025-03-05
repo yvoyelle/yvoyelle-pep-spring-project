@@ -31,10 +31,11 @@ public class AccountService {
     List<Account> accounts = new ArrayList<Account>();
 
 
-    public Optional<Account> login(String username, String password) {
-
-     return accountRepository.findByUsernameAndPassword(username,password);
+    public Account getAccountByUsernameAndPassword(String username, String password) {
+        return accountRepository.findByUsernameAndPassword(username, password);
     }
+    
+    
 
 
 }

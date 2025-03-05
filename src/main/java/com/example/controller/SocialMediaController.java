@@ -83,19 +83,18 @@ public class SocialMediaController {
      */
 
      @PostMapping("/login")
-     public ResponseEntity <String> login (@RequestBody Account account,String username,String password) throws AuthenticationException, RuntimeException{
-       
-        if (account.getUsername().equals(username) && account.getPassword().equals(password)) {
-
-            accountService.login(account.getUsername(),account.getPassword());
-            return ResponseEntity.status(200).body(null);
-
-        }else{
-            return ResponseEntity.status(401).body(null);
-        }
-
-
-    }
+     public ResponseEntity<Account> login(@RequestBody Account account) {
+         // check to see if user exixt in database based on provided credentials
+         Account existingAccount = accountService.getAccountByUsernameAndPassword(account.getUsername(), account.getPassword());
+     
+         if (existingAccount != null) {
+             // Return the user details
+             return ResponseEntity.ok(existingAccount);
+         } else {
+             return ResponseEntity.status(401).body(null); 
+         }
+     }
+     
 
      }
 

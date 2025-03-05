@@ -15,7 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     // Account saveAccount (Account newAccount);
 
     Optional<Account> findByUsername(String account);
-    Optional<Account> findByUsernameAndPassword(String username, String password);
 
-
+        Account findByUsernameAndPassword(String username, String password);
+    
+    
 }
