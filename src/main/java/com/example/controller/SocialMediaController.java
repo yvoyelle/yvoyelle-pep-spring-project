@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
 import com.example.service.AccountService;
+import com.example.service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your
@@ -27,10 +29,12 @@ import com.example.service.AccountService;
 public class SocialMediaController {
 
     private AccountService accountService;
+    private MessageService messageService;
 
     @Autowired
-    public void SocialMediaController(AccountService accountService) {
+    public void SocialMediaController(AccountService accountService, MessageService messageService) {
         this.accountService = accountService;
+        this.messageService = messageService;
     }
 
     /*
@@ -82,19 +86,55 @@ public class SocialMediaController {
      * (Unauthorized)
      */
 
-     @PostMapping("/login")
-     public ResponseEntity<Account> login(@RequestBody Account account) {
-         // check to see if user exixt in database based on provided credentials
-         Account existingAccount = accountService.getAccountByUsernameAndPassword(account.getUsername(), account.getPassword());
-     
-         if (existingAccount != null) {
-             // Return the user details
-             return ResponseEntity.ok(existingAccount);
-         } else {
-             return ResponseEntity.status(401).body(null); 
-         }
-     }
-     
+    @PostMapping("/login")
+    public ResponseEntity<Account> login(@RequestBody Account account) {
+        // check to see if user exixt in database based on provided credentials
+        Account existingAccount = accountService.getAccountByUsernameAndPassword(account.getUsername(),
+                account.getPassword());
 
-     }
+        if (existingAccount != null) {
+            // Return the user details
+            return ResponseEntity.ok(existingAccount);
+        } else {
+            return ResponseEntity.status(401).body(null);
+        }
+    }
 
+    /*
+     * ## 3: Our API should be able to process the creation of new messages.
+     * 
+     * As a user, I should be able to submit a new post on the endpoint POST
+     * localhost:8080/messages. The request body will contain a JSON representation
+     * of a message, which should be persisted to the database, but will not contain
+     * a messageId.
+     * 
+     * - The creation of the message will be successful if and only if the
+     * messageText is not blank, is not over 255 characters, and postedBy refers to
+     * a real, existing user. If successful, the response body should contain a JSON
+     * of the message, including its messageId. The response status should be 200,
+     * which is the default. The new message should be persisted to the database.
+     * - If the creation of the message is not successful, the response status
+     * should be 400. (Client error)
+     */
+
+    @PostMapping("/messages")
+
+    public ResponseEntity<String> createMessage(@RequestBody Message message, Account account) {
+
+        if (message.getMessageText().isEmpty() && message.getMessageText().length() < 255) {
+            return ResponseEntity.status(400).body("you must add valid message");
+        }
+
+        // Account ifExistUser =accountService.getUserByPostId(account.getAccountId());
+
+        if (message.getPostedBy () != null) {
+            messageService.createmessage(message);
+            return ResponseEntity.status(200).body(null);
+        } else {
+
+            return ResponseEntity.status(400).body(null);
+        }
+
+    }
+
+}
