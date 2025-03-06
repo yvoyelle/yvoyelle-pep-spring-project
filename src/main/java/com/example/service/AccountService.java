@@ -12,7 +12,7 @@ import java.util.*;
 
 @Service
 public class AccountService {
-
+    @Autowired
     private final AccountRepository accountRepository;
 
     @Autowired
@@ -34,7 +34,9 @@ public class AccountService {
     public Account getAccountByUsernameAndPassword(String username, String password) {
         return accountRepository.findByUsernameAndPassword(username, password);
     }
-    
+    public Account getAccountById(Integer accountId) {
+        return accountRepository.findByAccountId(accountId);
+    }
  
 
 }

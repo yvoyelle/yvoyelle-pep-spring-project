@@ -3,6 +3,7 @@ package com.example.controller;
 import javax.security.sasl.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,8 @@ import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
+
+import java.util.*;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your
@@ -119,22 +122,36 @@ public class SocialMediaController {
 
     @PostMapping("/messages")
 
-    public ResponseEntity<String> createMessage(@RequestBody Message message, Account account) {
+    public ResponseEntity<Message> createMessage(@RequestBody Message message, Account account) {
 
-        if (message.getMessageText().isEmpty() && message.getMessageText().length() < 255) {
-            return ResponseEntity.status(400).body("you must add valid message");
+        Account existAccount = accountService.getAccountById(message.getPostedBy());
+
+        if (message.getMessageText().isEmpty() || message.getMessageText().length() > 255 || existAccount == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+        Message saveMessage = messageService.createmessage(message);
 
-        // Account ifExistUser =accountService.getUserByPostId(account.getAccountId());
-
-        if (message.getPostedBy () != null) {
-            messageService.createmessage(message);
-            return ResponseEntity.status(200).body(null);
-        } else {
-
-            return ResponseEntity.status(400).body(null);
-        }
-
+        return ResponseEntity.ok(saveMessage);
     }
+
+    /*
+     * ## 4: Our API should be able to retrieve all messages.
+     * 
+     * As a user, I should be able to submit a GET request on the endpoint GET
+     * localhost:8080/messages.
+     * 
+     * - The response body should contain a JSON representation of a list containing
+     * all messages retrieved from the database. It is expected for the list to
+     * simply be empty if there are no messages. The response status should always
+     * be 200, which is the default.
+     */
+
+     @GetMapping("/messages")
+     public ResponseEntity <List<Message>> listAllMessage(){
+
+        List<Message> messages = messageService.messageList();
+        
+        return ResponseEntity.ok(messages) ;
+     }
 
 }
