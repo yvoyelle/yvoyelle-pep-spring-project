@@ -1,18 +1,24 @@
 package com.example.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.entity.Account;
 import com.example.entity.Message;
 import java.util.*;
 
-import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
 
 @Repository
-public interface MessageRepository extends JpaRepository <Message,Long> {
+public interface MessageRepository extends JpaRepository <Message,Integer> {
 
-    //Optional<Message> findByPostid(int post_id);
+  List<Message> findByPostedBy(int postedBy);
 
+@Modifying
+
+@Query("UPDATE Message m SET m.messageText = :text WHERE m.messageId = :id")
+int updateMessageTextById(@Param("id") int id, @Param("text") String text);
 
 }
