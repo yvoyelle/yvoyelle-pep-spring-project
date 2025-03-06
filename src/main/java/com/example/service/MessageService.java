@@ -64,6 +64,6 @@ public class MessageService {
     // *************************************************************************************
     @Transactional
     public int updateMessage(int messageId, String newText) {
-        return messageRepository.updateMessageTextById(messageId, newText);
+        return messageRepository.updateMessageTextById( newText,messageId);
     }
 }

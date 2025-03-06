@@ -10,15 +10,16 @@ import com.example.entity.Account;
 import com.example.entity.Message;
 import java.util.*;
 
-
 @Repository
-public interface MessageRepository extends JpaRepository <Message,Integer> {
+public interface MessageRepository extends JpaRepository<Message, Integer> {
 
   List<Message> findByPostedBy(int postedBy);
 
-@Modifying
-
-@Query("UPDATE Message m SET m.messageText = :text WHERE m.messageId = :id")
-int updateMessageTextById(@Param("id") int id, @Param("text") String text);
-
+  // ***************************************************************************************
+  // -----I fund this query in Stack OverFlow but what they expalin is number 1 is
+  // for the first value and 2 for the segun value----
+  // *************************************************************************************
+  @Modifying
+  @Query("UPDATE Message SET messageText = ?1 WHERE messageId = ?2")
+  int updateMessageTextById(String messageText, int messageId);
 }
