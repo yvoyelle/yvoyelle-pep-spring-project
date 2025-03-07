@@ -192,7 +192,8 @@ public class SocialMediaController {
     @GetMapping("/messages/{messageId}")
     public ResponseEntity<Message> getMessageById(@PathVariable("messageId") int messageId) {
         // ***************************************************************************************
-        // -----Les't used a Optional to check if there is a message belong with id provided----
+        // -----Les't used a Optional to check if there is a message belong with id
+        // provided----
         // ***************************************************************************************
         Optional<Message> message = messageService.getMessageById(messageId);
 
@@ -252,15 +253,32 @@ public class SocialMediaController {
         return ResponseEntity.ok().body(null);
     }
 
-
-
+    /*
+     * ## 7: Our API should be able to update a message text identified by a message
+     * ID.
+     * 
+     * As a user, I should be able to submit a PATCH request on the endpoint PATCH
+     * localhost:8080/messages/{messageId}. The request body should contain a new
+     * messageText values to replace the message identified by messageId. The
+     * request body can not be guaranteed to contain any other information.
+     * 
+     * - The update of a message should be successful if and only if the message id
+     * already exists and the new messageText is not blank and is not over 255
+     * characters. If the update is successful, the response body should contain the
+     * number of rows updated (1), and the response status should be 200, which is
+     * the default. The message existing on the database should have the updated
+     * messageText.
+     * - If the update of the message is not successful for any reason, the response
+     * status should be 400. (Client error)
+     */
 
     @PatchMapping("/messages/{messageId}")
 
-    public ResponseEntity<String> updateMessage(@PathVariable int messageId, @RequestBody Message message) {
+    public ResponseEntity<String> PatchMessage(@PathVariable int messageId, @RequestBody Message message) {
 
         // ***************************************************************************************
-        // -----Les't used a Optional to check if there is a message belong with id provided----
+        // -----Les't used a Optional to check if there is a message belong with id
+        // provided----
         // ***************************************************************************************
 
         Optional<Message> existingMessage = messageService.getMessageById(messageId);
@@ -281,9 +299,9 @@ public class SocialMediaController {
         }
 
         // Update message text in the database
-        int rowsUpdated = messageService.updateMessage(messageId, message.getMessageText());
+        Message rowsUpdated = messageService.patchMessage(messageId, message.getMessageText());
 
-        if (rowsUpdated > 0) {
+        if (rowsUpdated != null) {
             return ResponseEntity.ok("1");
         }
 

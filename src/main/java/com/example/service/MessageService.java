@@ -2,8 +2,11 @@ package com.example.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
+
 import java.util.*;
 
+import javax.el.ELException;
 import javax.transaction.Transactional;
 
 import com.example.entity.Account;
@@ -25,10 +28,6 @@ public class MessageService {
 
     }
 
-    // ***************************************************************************************
-    // -----I used transitional for modifical row in the DB----
-    // *************************************************************************************
-    @Transactional
     public Message createmessage(Message message) {
         return messageRepository.save(message);
     }
@@ -41,29 +40,24 @@ public class MessageService {
         return messageRepository.findById(messageId);
     }
 
-    // ***************************************************************************************
-    // -----I used transitional for modifical row in the DB----
-    // ***************************************************************************************
-    @Transactional
     public int deleteMessageById(int messageId) {
+        
         if (messageRepository.existsById(messageId)) {
             return 1;
         }
         return 0;
     }
 
-    // ***************************************************************************************
-    // -----list all message based in id provide----
-    // *************************************************************************************
     public List<Message> getAllMessagesByUser(int userId) {
         return messageRepository.findByPostedBy(userId);
     }
 
-    // ***************************************************************************************
-    // -----I used transitional for modifical row in the DB----
-    // *************************************************************************************
-    @Transactional
-    public int updateMessage(int messageId, String newText) {
-        return messageRepository.updateMessageTextById( newText,messageId);
+    public Message patchMessage(int messageId, String newText) throws ELException {
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new ELException());
+
+        if (messageId > 0)
+            message.setMessageText(newText);
+
+        return messageRepository.save(message);
     }
 }
